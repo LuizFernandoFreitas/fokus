@@ -14,6 +14,9 @@ const btnCancelar = document.querySelector('.app__form-footer__button--cancel')
 
 const btnDelete = document.querySelector('.app__form-footer__button--delete')
 
+const btnDeletaConcluidas = document.querySelector('#btn-remover-concluidas')
+const btnDeletaTodas = document.querySelector('#btn-remover-todas')
+
 const localStorageTarefas = localStorage.getItem('tarefas')
 
 let tarefas = localStorageTarefas ? JSON.parse(localStorageTarefas) : []
@@ -33,6 +36,19 @@ let itemTarefaSelecionada = null
 
 let tarefaEmEdicao = null
 let paragrafoEmEdicao = null
+
+const removerTarefas = (somenteConcluidas) => {
+
+    const seletor = somenteConcluidas ? '.app__section-task-list-item-complete' : '.app__section-task-list-item'
+
+    document.querySelectorAll(seletor).forEach((element) => {
+        element.remove();
+    });
+
+    tarefas = somenteConcluidas ? tarefas.filter(t => !t.concluida) : []
+
+    updateLocalStorage()
+}
 
 const selecionaTarefa = (tarefa, elemento) => {
 
@@ -144,9 +160,7 @@ cancelFormTaskBtn.addEventListener('click', () => {
     formTask.classList.add('hidden')
 })
 
-btnCancelar.addEventListener('click', () => {
-    limparForm()
-})
+btnCancelar.addEventListener('click', limparForm)
 
 btnDelete.addEventListener('click', () => {
     if (tarefaSelecionada) {
@@ -202,7 +216,8 @@ formTask.addEventListener('submit', (evento) => {
     limparForm()
 })
 
-localStorage.setItem('quantidade', 10)
+btnDeletaConcluidas.addEventListener('click', () => removerTarefas(true))
+btnDeletaTodas.addEventListener('click', () => removerTarefas(false))
 
 document.addEventListener('TarefaFinalizada', function (e) {
     if (tarefaSelecionada) {
